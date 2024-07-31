@@ -4,7 +4,7 @@ const uri = "mongodb+srv://vidyun:vidyun180903@cluster0.4klaovj.mongodb.net/?ret
 
 async function connectToDatabase() {
     try {
-        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+        await mongoose.connect(uri)
         console.log("MongoDB connected....")
     } catch(err) {
             console.error("Connection error", err);
