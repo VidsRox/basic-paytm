@@ -1,8 +1,11 @@
 const express = require("express");
-const { User } = require("../db")
+const { User, Account } = require("../db")
 const jwt = require("jsonwebtoken")
 const z = require("zod");
+
 const JWT_SECRET = require("../config");
+console.log('JWT_SECRET:', JWT_SECRET);
+
 const { authMiddleware } = require("../middleware");
 
 const router = express.Router();
@@ -33,12 +36,24 @@ router.post("/signup", async(req, res) => {
             }) 
         }
 
-        const dbUser = await User.create(body);
+        const dbUser = await User.create({
+            username: req.body.username,
+            password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+        });
 
+        await Account.create({
+            userId: dbUser._id,
+            balance: 1 + Math.random() * 10000
+        })
+        
         const token = jwt.sign({
             userId: dbUser._id
         }, JWT_SECRET)
 
+        
+        
         res.json({
             message: "User created successfully",
             token: token
@@ -51,35 +66,31 @@ const signinBody = z.object({
     password: z.string()
 })
 
-router.post("/signin", async (req,res) => {
-    const {success} = signinBody.safeParse(req.body)
-    
-    if(!success) {
-        return res.status(411).json({
-            message: "Incorrect inputs"
-        }) 
-    } 
-
-        const user = await User.findOne({
-            username: req.body.username,
-            password: req.body.password
-        });
-
-        if (user) {
-            const token = jwt.sign({
-                userId: user._id
-            }, JWT_SECRET)
-        
-        res.json({
-            token: token
-        })
-        return;
+router.post("/signin", async (req, res) => {
+    try {
+      const { success } = signinBody.safeParse(req.body);
+      if (!success) {
+        return res.status(411).json({ message: "Incorrect inputs" });
+      }
+  
+      const user = await User.findOne({
+        username: req.body.username,
+        password: req.body.password
+      });
+  
+      if (user) {
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+        res.json({ token });
+      } else {
+        res.status(400).json({ message: "Error while logging in" });
+      }
+    } catch (error) {
+      console.error('Error handling /signin request:', error.message); // Log detailed error
+      res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
-        res.status(400).json({
-            message: "Error while logging in"
-        })
-
-})
+  });
+  
+  
 
 const updateBody = z.object({
     password: z.string().optional(),
