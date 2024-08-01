@@ -10,7 +10,6 @@ const authMiddleware = (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     try {
-        console.log('JWT_SECRET:', JWT_SECRET); // Debugging statement
         const decoded = jwt.verify(token, JWT_SECRET);
         console.log('Decoded Token:', decoded);
         if (decoded.userId) {

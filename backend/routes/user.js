@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken")
 const z = require("zod");
 
 const JWT_SECRET = require("../config");
-console.log('JWT_SECRET:', JWT_SECRET);
 
 const { authMiddleware } = require("../middleware");
 
