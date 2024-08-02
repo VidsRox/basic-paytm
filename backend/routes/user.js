@@ -3,7 +3,7 @@ const { User, Account } = require("../db")
 const jwt = require("jsonwebtoken")
 const z = require("zod");
 
-const JWT_SECRET = require("../config");
+const { JWT_SECRET } = require("../config");
 
 const { authMiddleware } = require("../middleware");
 
