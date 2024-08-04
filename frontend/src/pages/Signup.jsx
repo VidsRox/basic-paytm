@@ -62,7 +62,7 @@ export const Signup = () => {
                             });
                             localStorage.setItem("token", response.data.token);
                             //when user has logged out-
-                            //localStorage.removeItem("token");
+                            localStorage.removeItem("token");
                         }}
                         label={"Sign up"}
                     />
