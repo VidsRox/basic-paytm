@@ -1,17 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth } from '../authentication/AuthContext';
 
 export const LogoutButton = () => {
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const handleLogout = async () => {
-        try {
-            await axios.post('http://localhost:3000/api/v1/account/logout');
-            localStorage.removeItem('token');
-            navigate('/signin');
-        } catch (error) {
-            console.error('Error logging out:', error);
-        }
+        await logout(); // Call logout from AuthContext
+        navigate('/signin'); // Redirect to sign-in page
     };
 
     return (

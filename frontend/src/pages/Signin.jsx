@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom"; // Import Navigate for redirect
+import { useNavigate } from "react-router-dom";
 import { BottomWarning } from "../components/BottomWarning";
 import { Button } from "../components/Button";
 import { Heading } from "../components/Heading";
 import { InputBox } from "../components/InputBox";
 import { SubHeading } from "../components/SubHeading";
 import axios from "axios";
-import { useAuth } from "../authentication/AuthContext"; // Import useAuth
+import { useAuth } from "../authentication/AuthContext";
 
 export const Signin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth(); // use isAuthenticated from AuthContext
+    const { isAuthenticated, login, loading } = useAuth();
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -27,8 +27,7 @@ export const Signin = () => {
                 password
             });
 
-            localStorage.setItem("token", response.data.token);
-            // localStorage.setItem("firstName", response.data.firstName);
+            login(response.data.token); // Use login from AuthContext
             navigate("/dashboard"); // Redirect to dashboard on successful login
         } catch (error) {
             console.error("Error during sign in:", error);
@@ -36,9 +35,12 @@ export const Signin = () => {
         }
     };
 
-    // If user is already authenticated, redirect them to the dashboard
+    if (loading) {
+        return <div>Loading...</div>; // Show a loading message while checking auth
+    }
+
     if (isAuthenticated) {
-        return <Navigate to="/dashboard" />;
+        return null; // Avoid rendering the Signin component if authenticated
     }
 
     return (
