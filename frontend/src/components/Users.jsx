@@ -6,22 +6,46 @@ import { useNavigate } from "react-router-dom";
 export const Users = () => {
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
+    const [currentUser, setCurrentUser] = useState(null);
 
-    // Fetch users when filter changes
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=` + filter);
-                console.log("API Response:", response.data); // Ensure this shows the expected data
-                setUsers(Array.isArray(response.data.users) ? response.data.users : []);
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    console.error("No token found");
+                    return;
+                }
+
+                // Fetch the logged-in user details
+                const userResponse = await axios.get("http://localhost:3000/api/v1/user/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const currentUserId = userResponse.data._id;
+                setCurrentUser(currentUserId);
+
+                // Fetch all users with filtering
+                const usersResponse = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=` + filter, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                console.log("API Response:", usersResponse.data); // Debugging purpose
+                
+                // Filter out the current user
+                const filteredUsers = usersResponse.data.users.filter(user => user._id !== currentUserId);
+                console.log("Filtered Users:", filteredUsers); // Debugging purpose
+                setUsers(filteredUsers);
             } catch (error) {
-                console.error("Error fetching users:", error); // Ensure this is logged if there's an error
+                console.error("Error fetching users:", error);
             }
         };
-    
+
         fetchUsers();
     }, [filter]);
-    
 
     return (
         <>

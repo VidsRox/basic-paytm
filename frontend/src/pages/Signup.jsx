@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { BottomWarning } from "../components/BottomWarning";
 import { Button } from "../components/Button";
 import { Heading } from "../components/Heading";
@@ -12,9 +13,34 @@ export const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(""); // State for success message
+
+    const navigate = useNavigate(); // Initialize useNavigate hook
 
     const handlePasswordToggle = () => {
         setShowPassword(!showPassword);
+    };
+
+    const handleSignup = async () => {
+        try {
+            const response = await axios.post("http://localhost:3000/api/v1/user/signup", {
+                username,
+                firstName,
+                lastName,
+                password
+            });
+
+            // Show success message
+            setSuccessMessage("User created successfully! Redirecting to sign in...");
+
+            // Wait for a few seconds before redirecting
+            setTimeout(() => {
+                navigate("/signin");
+            }, 2000); // Redirect after 2 seconds
+
+        } catch (error) {
+            console.error('Error during signup:', error);
+        }
     };
 
     return (
@@ -53,20 +79,16 @@ export const Signup = () => {
 
                 <div className="pt-4">
                     <Button
-                        onClick={async () => {
-                            const response = await axios.post("http://localhost:3000/api/v1/user/signup", {
-                                username,
-                                firstName,
-                                lastName,
-                                password
-                            });
-                            localStorage.setItem("token", response.data.token);
-                            //when user has logged out-
-                            localStorage.removeItem("token");
-                        }}
+                        onClick={handleSignup}
                         label={"Sign up"}
                     />
                 </div>
+
+                {successMessage && ( // Display success message if it exists
+                    <div className="text-green-600 mt-2">
+                        {successMessage}
+                    </div>
+                )}
 
                 <BottomWarning label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"} />
             </div>

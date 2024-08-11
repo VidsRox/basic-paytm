@@ -1,16 +1,24 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import this to handle navigation
+import { useState, useEffect } from "react";
+import { useNavigate, Navigate } from "react-router-dom"; // Import Navigate for redirect
 import { BottomWarning } from "../components/BottomWarning";
 import { Button } from "../components/Button";
 import { Heading } from "../components/Heading";
 import { InputBox } from "../components/InputBox";
 import { SubHeading } from "../components/SubHeading";
 import axios from "axios";
+import { useAuth } from "../authentication/AuthContext"; // Import useAuth
 
 export const Signin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth(); // use isAuthenticated from AuthContext
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/dashboard"); // Redirect to dashboard if already authenticated
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleSignin = async () => {
         try {
@@ -20,12 +28,18 @@ export const Signin = () => {
             });
 
             localStorage.setItem("token", response.data.token);
+            // localStorage.setItem("firstName", response.data.firstName);
             navigate("/dashboard"); // Redirect to dashboard on successful login
         } catch (error) {
             console.error("Error during sign in:", error);
             // Handle error (e.g., show a message to the user)
         }
     };
+
+    // If user is already authenticated, redirect them to the dashboard
+    if (isAuthenticated) {
+        return <Navigate to="/dashboard" />;
+    }
 
     return (
         <div className="bg-slate-300 h-screen flex justify-center">
