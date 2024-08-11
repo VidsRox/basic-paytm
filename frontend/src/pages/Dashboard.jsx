@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import { Appbar } from "../components/Appbar";
 import { Users } from "../components/Users";
 import { Balance } from "../components/Balance";
@@ -10,11 +11,19 @@ export const Dashboard = () => {
     const [balance, setBalance] = useState(0);
     const [initials, setInitials] = useState("");
     const [firstName, setFirstName] = useState("");
-    
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchUserData = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/signin"); // Redirect to sign-in page if no token is found
+                return;
+            }
+
             try {
-                const token = localStorage.getItem("token");
                 const response = await axios.get("http://localhost:3000/api/v1/user/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -28,16 +37,21 @@ export const Dashboard = () => {
                 // Generate initials
                 const userInitials = `${firstName[0]}${lastName[0]}`;
                 setInitials(userInitials);
-
             } catch (error) {
                 console.error("Error fetching user data:", error);
-                // Handle error (e.g., redirect to login page if unauthorized)
+                navigate("/signin"); // Redirect to sign-in page if there is an error
             }
         };
 
         const fetchBalance = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/signin"); // Redirect to sign-in page if no token is found
+                return;
+            }
+
             try {
-                const token = localStorage.getItem("token");
                 const response = await axios.get("http://localhost:3000/api/v1/account/balance", {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -46,13 +60,19 @@ export const Dashboard = () => {
                 setBalance(response.data.balance);
             } catch (error) {
                 console.error("Error fetching balance:", error);
-                // Handle error (e.g., redirect to login page if unauthorized)
+                navigate("/signin"); // Redirect to sign-in page if there is an error
+            } finally {
+                setLoading(false); // Stop loading state
             }
         };
 
         fetchUserData();
         fetchBalance();
-    }, []);
+    }, [navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>; // Render loading state while fetching data
+    }
 
     return (
         <div>

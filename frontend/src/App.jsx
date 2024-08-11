@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {AuthProvider} from './authentication/AuthContext'
-import IntroPage from './pages/IntroPage';
+import {IntroPage} from './pages/IntroPage'
 import { Signup } from './pages/Signup';
 import { Signin } from './pages/Signin';
 import {Dashboard} from './pages/Dashboard'

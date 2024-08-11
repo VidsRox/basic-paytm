@@ -107,6 +107,18 @@ router.post('/logout', (req, res) => {
     });
 });
 
+// In your routes file
+router.get("/transactions", authMiddleware, async (req, res) => {
+    try {
+        const transactions = await Transaction.find({
+            $or: [{ userId: req.userId }, { from: req.userId }, { to: req.userId }]
+        }).sort({ date: -1 }); // Sort by date descending
+
+        res.json(transactions);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch transactions", error: error.message });
+    }
+});
 
 
 module.exports = router;
