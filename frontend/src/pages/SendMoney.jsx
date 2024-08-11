@@ -1,38 +1,53 @@
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from "axios";
 import { useState } from 'react';
 
 export const SendMoney = () => {
+    // Getting search parameters from the URL
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
     const name = searchParams.get("name");
+
+    // State to manage form inputs, loading state, and messages
     const [amount, setAmount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
+    // useNavigate hook to programmatically navigate to different routes
+    const navigate = useNavigate();
+
+    // Function to handle money transfer
     const handleTransfer = async () => {
-        setLoading(true);
-        setError(null);
-        setSuccess(null);
+        setLoading(true);  // Show loading state while the request is being processed
+        setError(null);    // Clear any previous errors
+        setSuccess(null);  // Clear any previous success messages
 
         try {
+            // Send POST request to initiate the money transfer
             const response = await axios.post("http://localhost:3000/api/v1/account/transfer", {
                 to: id,
                 amount
             }, {
                 headers: {
-                    Authorization: "Bearer " + localStorage.getItem("token")
+                    Authorization: "Bearer " + localStorage.getItem("token") // Include JWT in the request headers
                 }
             });
 
+            // On success, set the success message
             setSuccess("Transfer successful!");
             console.log("Transfer successful:", response.data);
+
+            // Redirect to the dashboard after a 1-second delay
+            setTimeout(() => {
+                navigate('/dashboard', { state: { successMessage: 'Transfer successful!' } });
+            }, 1000); // 1-second delay (1000 milliseconds)
         } catch (error) {
+            // If there's an error, set the error message
             setError(error.response ? error.response.data.message : error.message);
             console.error("Transfer failed:", error.response ? error.response.data : error.message);
         } finally {
-            setLoading(false);
+            setLoading(false); // Stop showing the loading state
         }
     };
 
@@ -48,6 +63,7 @@ export const SendMoney = () => {
                     <div className="p-6">
                         <div className="flex items-center space-x-4">
                             <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                                {/* Displaying the first letter of the recipient's name */}
                                 <span className="text-2xl text-white">{name ? name[0].toUpperCase() : '?'}</span>
                             </div>
                             <h3 className="text-2xl font-semibold">{name}</h3>
@@ -62,7 +78,7 @@ export const SendMoney = () => {
                                 </label>
                                 <input
                                     onChange={(e) => {
-                                        setAmount(e.target.value);
+                                        setAmount(e.target.value); // Update amount state as user types
                                     }}
                                     type="number"
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -71,12 +87,13 @@ export const SendMoney = () => {
                                 />
                             </div>
                             <button
-                                onClick={handleTransfer}
+                                onClick={handleTransfer} // Trigger the transfer function on click
                                 className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
-                                disabled={loading}
+                                disabled={loading} // Disable button while loading
                             >
-                                {loading ? 'Processing...' : 'Initiate Transfer'}
+                                {loading ? 'Processing...' : 'Initiate Transfer'} {/* Show loading text if loading */}
                             </button>
+                            {/* Display success or error message */}
                             {success && <p className="text-green-500 text-center mt-2">{success}</p>}
                             {error && <p className="text-red-500 text-center mt-2">{error}</p>}
                         </div>

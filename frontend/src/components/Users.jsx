@@ -13,7 +13,7 @@ export const Users = () => {
             try {
                 const response = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=` + filter);
                 console.log("API Response:", response.data); // Ensure this shows the expected data
-                setUsers(response.data.user);
+                setUsers(Array.isArray(response.data.users) ? response.data.users : []);
             } catch (error) {
                 console.error("Error fetching users:", error); // Ensure this is logged if there's an error
             }
@@ -21,6 +21,7 @@ export const Users = () => {
     
         fetchUsers();
     }, [filter]);
+    
 
     return (
         <>

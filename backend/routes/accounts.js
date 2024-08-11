@@ -29,6 +29,14 @@ router.post("/transfer", authMiddleware, async (req, res) => {
 
     const { amount, to } = req.body; // Destructure 'amount' and 'to' from request body
 
+    if (!amount || amount <= 0) {
+        return res.status(400).json({ message: "Invalid amount" });
+    }
+    
+    if (!to || typeof to !== "string") {
+        return res.status(400).json({ message: "Invalid recipient account ID" });
+    }
+
     try {
         // Fetch the account of the logged-in user using the userId from the token (set by authMiddleware)
         const account = await Account.findOne({ userId: req.userId }).session(session);
@@ -43,6 +51,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
 
         // Fetch the recipient's account using the provided 'to' userId
         const toAccount = await Account.findOne({ userId: to }).session(session);
+        console.log("Recipient Account Query:", { to, toAccount });
 
         // Check if the recipient's account exists
         if (!toAccount) {
