@@ -119,14 +119,24 @@ router.put("/", authMiddleware, async (req, res) => {
 
 router.get("/bulk", async (req, res) => {
     try {
-        // Retrieve the 'filter' query parameter from the request URL, defaulting to an empty string if not provided.
-        // This allows the API to filter users based on a search string.
+        // Retrieve the filter query parameter from the request URL
         const filter = req.query.filter || "";
 
-        // Perform an asynchronous database query on the 'User' collection to find users.
-        // The query looks for users whose 'firstName' or 'lastName' fields match the 'filter' string.
-        // The '$or' operator checks either condition, and the '$regex' operator enables pattern matching.
+        // Extract the token from the Authorization header
+        const authHeader = req.headers.authorization;
+        const token = authHeader && authHeader.split(' ')[1]; // Bearer token
+
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // Decode the token to get the user ID
+        const decoded = jwt.verify(token, JWT_SECRET); // Use your JWT secret
+        const currentUserId = decoded._id; // Assuming token contains user ID as '_id'
+
+        // Find users matching the filter and exclude the current user
         const users = await User.find({
+            _id: { $ne: currentUserId }, // Exclude the current user
             $or: [
                 {
                     firstName: {
@@ -143,26 +153,41 @@ router.get("/bulk", async (req, res) => {
             ]
         });
 
-        // Check if any users were found; if not, respond with a 404 status and a message indicating no users were found.
         if (users.length === 0) {
             return res.status(404).json({ message: "No users found" });
         }
 
-        // If users are found, respond with a JSON object containing the filtered user data.
-        // The 'map' function creates an array of objects with selected fields for each user.
         res.json({
             users: users.map(user => ({
-                username: user.username,   // Include the 'username' field
-                firstName: user.firstName, // Include the 'firstName' field
-                lastName: user.lastName,   // Include the 'lastName' field
-                _id: user._id              // Include the user's unique identifier '_id'
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                _id: user._id
             }))
         });
     } catch (error) {
-        // If an error occurs during the query or data processing, respond with a 500 status code and an error message.
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 });
 
+router.get("/me", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId); // Assuming req.userId is set by your authMiddleware
+        if (user) {
+            res.json({
+                firstName: user.firstName,
+                lastName: user.lastName
+            });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+});
+
+router.get("/verifyToken", authMiddleware, (req, res) => {
+    res.status(200).json({ message: "Valid token" })
+})
 
 module.exports = router;
