@@ -11,6 +11,7 @@ import { useAuth } from "../authentication/AuthContext";
 export const Signin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(null); // State for error messages
     const navigate = useNavigate();
     const { isAuthenticated, login, loading } = useAuth();
 
@@ -31,7 +32,8 @@ export const Signin = () => {
             navigate("/dashboard"); // Redirect to dashboard on successful login
         } catch (error) {
             console.error("Error during sign in:", error);
-            // Handle error (e.g., show a message to the user)
+            // Set the error message to state to display it in the UI
+            setError(error.response?.data.message || "An error occurred during sign in.");
         }
     };
 
@@ -63,6 +65,8 @@ export const Signin = () => {
                     <div className="pt-4">
                         <Button label={"Sign in"} onClick={handleSignin} />
                     </div>
+                    {/* Display the error message */}
+                    {error && <p className="text-red-500 text-center mt-2">{error}</p>}
                     <BottomWarning label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"} />
                 </div>
             </div>

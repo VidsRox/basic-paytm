@@ -5,7 +5,7 @@ import { Users } from "../components/Users";
 import { Balance } from "../components/Balance";
 import { WelcomeMessage } from "../components/WelcomeMessage";
 import axios from "axios";
-import { LogoutButton } from "../components/LogoutButton";
+import { DropdownMenu } from "../components/Dropdown";
 import { useAuth } from "../authentication/AuthContext";
 
 export const Dashboard = () => {
@@ -75,7 +75,7 @@ export const Dashboard = () => {
         <div>
             <Appbar initials={initials} />
             <div className="flex justify-end m-4">
-                <LogoutButton />
+                <DropdownMenu />
             </div>
             <div className="m-8">
                 <WelcomeMessage firstName={firstName} />

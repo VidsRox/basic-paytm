@@ -12,40 +12,50 @@ export const Users = () => {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem("token");
-
+    
                 if (!token) {
                     console.error("No token found");
                     return;
                 }
-
+    
                 // Fetch the logged-in user details
                 const userResponse = await axios.get("http://localhost:3000/api/v1/user/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                
                 const currentUserId = userResponse.data._id;
                 setCurrentUser(currentUserId);
-
+    
                 // Fetch all users with filtering
                 const usersResponse = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=` + filter, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+    
                 console.log("API Response:", usersResponse.data); // Debugging purpose
-                
-                // Filter out the current user
-                const filteredUsers = usersResponse.data.users.filter(user => user._id !== currentUserId);
-                console.log("Filtered Users:", filteredUsers); // Debugging purpose
-                setUsers(filteredUsers);
+    
+                if (usersResponse.data && Array.isArray(usersResponse.data.users)) {
+                    const firstUser = usersResponse.data.users[0]; // Accessing the first user
+                    console.log("First User:", firstUser); // Check if firstUser is defined
+    
+                    // Filter out the current user
+                    const filteredUsers = usersResponse.data.users.filter(user => user._id !== currentUserId);
+                    console.log("Filtered Users:", filteredUsers); // Debugging purpose
+                    setUsers(filteredUsers);
+                } else {
+                    console.error("Unexpected API response structure", usersResponse.data);
+                }
             } catch (error) {
                 console.error("Error fetching users:", error);
             }
         };
-
+    
         fetchUsers();
     }, [filter]);
+    
 
     return (
         <>

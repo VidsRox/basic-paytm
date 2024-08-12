@@ -29,19 +29,28 @@ export const Signup = () => {
                 lastName,
                 password
             });
-
+    
             // Show success message
             setSuccessMessage("User created successfully! Redirecting to sign in...");
-
+    
             // Wait for a few seconds before redirecting
             setTimeout(() => {
                 navigate("/signin");
             }, 2000); // Redirect after 2 seconds
-
+    
         } catch (error) {
             console.error('Error during signup:', error);
+            // Provide feedback to the user if there's a network error
+            if (error.code === 'ERR_NETWORK') {
+                alert('Network error: Please check your connection or try again later.');
+            } else if (error.response && error.response.data.message) {
+                alert(`Error: ${error.response.data.message}`);
+            } else {
+                alert('An unexpected error occurred. Please try again.');
+            }
         }
     };
+    
 
     return (
         <div className="bg-slate-300 h-screen flex justify-center items-center">
