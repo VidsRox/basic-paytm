@@ -101,7 +101,7 @@ const updateBody = z.object({
     lastName: z.string().optional()
 })
 
-router.put("/", authMiddleware, async (req, res) => {
+router.put("/update", authMiddleware, async (req, res) => {
     const { success, error } = updateBody.safeParse(req.body);
     if (!success) {
         return res.status(411).json({ message: "Error while updating information", error: error.errors });
