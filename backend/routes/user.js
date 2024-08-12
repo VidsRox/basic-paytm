@@ -93,8 +93,6 @@ router.post("/signin", async (req, res) => {
     }
 });
 
-  
-
 const updateBody = z.object({
     password: z.string().optional(),
     firstName: z.string().optional(),

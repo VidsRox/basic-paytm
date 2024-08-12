@@ -1,6 +1,6 @@
 const express = require("express");
 const {authMiddleware } = require("../middleware");
-const { Account } = require("../db");
+const { Account, Transaction } = require("../db");
 const { default: mongoose } = require("mongoose");
 
 const router = express.Router();
@@ -27,12 +27,14 @@ router.post("/transfer", authMiddleware, async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction(); // Begin the transaction
 
-    const { amount, to } = req.body; // Destructure 'amount' and 'to' from request body
+    const { amount, to } = req.body; // Destructure 'amount' and 'to' from the request body
 
+    // Validate the 'amount' input
     if (!amount || amount <= 0) {
         return res.status(400).json({ message: "Invalid amount" });
     }
-    
+
+    // Validate the 'to' input (recipient account ID)
     if (!to || typeof to !== "string") {
         return res.status(400).json({ message: "Invalid recipient account ID" });
     }
@@ -73,18 +75,26 @@ router.post("/transfer", authMiddleware, async (req, res) => {
             { $inc: { balance: amount } } // Increment balance by the transfer amount
         ).session(session);
 
+        // Create a transaction record to log the details of this transfer
+        const transaction = new Transaction({
+            from: account.userId, // The sender's user ID
+            to: toAccount.userId, // The recipient's user ID
+            amount, // The transfer amount
+            date: new Date() // The date and time of the transaction
+        });
+
+        await transaction.save({ session }); // Save the transaction record within the session
+
         // Commit the transaction to apply all changes atomically
         await session.commitTransaction();
 
         // Send a success response to the client
-        res.json({
-            message: "Transfer Successful"
-        });
+        res.json({ message: "Transfer Successful" });
     } catch (error) {
-        // If an error occurs, abort the transaction and rollback changes
+        // If an error occurs, abort the transaction and roll back changes
         await session.abortTransaction();
         res.status(500).json({
-            message: "Transfer failed",
+            message: "Transfer failed", // Inform the user about the failure
             error: error.message // Provide error details to assist with debugging
         });
     } finally {
@@ -107,18 +117,28 @@ router.post('/logout', (req, res) => {
     });
 });
 
-// In your routes file
-router.get("/transactions", authMiddleware, async (req, res) => {
+router.get("/history", authMiddleware, async (req, res) => {
     try {
         const transactions = await Transaction.find({
-            $or: [{ userId: req.userId }, { from: req.userId }, { to: req.userId }]
-        }).sort({ date: -1 }); // Sort by date descending
+            $or: [
+                { from: req.userId }, // Transactions where the user is the sender
+                { to: req.userId }    // Transactions where the user is the recipient
+            ]
+        }).sort({ date: -1 }); // Sort by date, most recent first
+
+        if (transactions.length === 0) {
+            return res.status(404).json({ message: "No transactions found" });
+        }
 
         res.json(transactions);
     } catch (error) {
-        res.status(500).json({ message: "Failed to fetch transactions", error: error.message });
+        res.status(500).json({
+            message: "Failed to fetch transaction history",
+            error: error.message
+        });
     }
 });
+
 
 
 module.exports = router;
