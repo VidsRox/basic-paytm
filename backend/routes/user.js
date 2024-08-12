@@ -76,10 +76,7 @@ router.post("/signin", async (req, res) => {
         const user = await User.findOne({ username });
 
         if (user) {
-            console.log('User found:', user.username); // Debugging output
-
             const isMatch = await bcrypt.compare(password, user.password);
-            console.log('Password match:', isMatch); // Debugging output
 
             if (isMatch) {
                 const token = jwt.sign({ userId: user._id }, JWT_SECRET);
@@ -88,13 +85,14 @@ router.post("/signin", async (req, res) => {
                 return res.status(400).json({ message: "Invalid username or password" });
             }
         } else {
-            return res.status(400).json({ message: "Invalid username or password" });
+            return res.status(400).json({ message: "User doesn't exist" });
         }
     } catch (error) {
         console.error('Error handling /signin request:', error.message);
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 });
+
   
 
 const updateBody = z.object({
