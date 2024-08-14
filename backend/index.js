@@ -7,7 +7,9 @@ const session = require('express-session');
 const app = express();
 
 app.use(Cors({
-  origin: "https://basic-paytm-frontend-six.vercel.app",
+  origin: "https://basic-paytm-frontend-six.vercel.app", // Your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
