@@ -1,6 +1,5 @@
 const express = require("express");
 const Cors = require('cors');
-const rootRouter = require("./routes/index");
 const { connectToDatabase } = require("./db");
 const session = require('express-session');
 const userRouter = require("./routes/user")
