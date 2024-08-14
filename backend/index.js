@@ -7,7 +7,7 @@ const session = require('express-session');
 const app = express();
 
 app.use(Cors({
-  origin: ["https://basic-paytm-frontend-six.vercel.app"],
+  origin: "https://basic-paytm-frontend-six.vercel.app",
   credentials: true
 }));
 
@@ -24,7 +24,3 @@ app.use(session({
 
 app.use("/api/v1", rootRouter);
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
-});
