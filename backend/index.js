@@ -3,19 +3,17 @@ const Cors = require('cors');
 const rootRouter = require("./routes/index");
 const { connectToDatabase } = require("./db");
 const session = require('express-session');
+const userRouter = require("./routes/user")
+const accountRouter = require('./routes/accounts')
 
 const app = express();
 
-const corsOptions = {
-  origin: "https://basic-paytm-frontend-six.vercel.app", // Frontend URL
+app.use(Cors({
+  origin: "https://basic-paytm-frontend-six.vercel.app", // Your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
-};
-
-app.use(Cors(corsOptions));
-
-app.options('*', Cors(corsOptions)); // Handle preflight requests
+}));
 
 app.use(express.json());
 
@@ -28,6 +26,6 @@ app.use(session({
   cookie: { secure: false } // Set `secure: true` if using HTTPS
 }));
 
-app.use("/api/v1", rootRouter);
-
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/account", accountRouter);
 
