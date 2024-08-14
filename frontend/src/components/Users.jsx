@@ -19,7 +19,7 @@ export const Users = () => {
                 }
     
                 // Fetch the logged-in user details
-                const userResponse = await axios.get("http://localhost:3000/api/v1/user/me", {
+                const userResponse = await axios.get("https://basic-paytm.vercel.app/api/v1/user/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -29,7 +29,7 @@ export const Users = () => {
                 setCurrentUser(currentUserId);
     
                 // Fetch all users with filtering
-                const usersResponse = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=` + filter, {
+                const usersResponse = await axios.get(`https://basic-paytm.vercel.app/api/v1/user/bulk?filter=` + filter, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

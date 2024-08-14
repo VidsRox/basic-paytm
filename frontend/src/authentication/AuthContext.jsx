@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await axios.post('http://localhost:3000/api/v1/account/logout');
+            await axios.post('https://basic-paytm.vercel.app/api/v1/account/logout');
             localStorage.removeItem('token');
             setIsAuthenticated(false);
         } catch (error) {
