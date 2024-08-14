@@ -6,12 +6,16 @@ const session = require('express-session');
 
 const app = express();
 
-app.use(Cors({
-  origin: "https://basic-paytm-frontend-six.vercel.app", // Your frontend URL
+const corsOptions = {
+  origin: "https://basic-paytm-frontend-six.vercel.app", // Frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
-}));
+};
+
+app.use(Cors(corsOptions));
+
+app.options('*', Cors(corsOptions)); // Handle preflight requests
 
 app.use(express.json());
 
@@ -26,3 +30,7 @@ app.use(session({
 
 app.use("/api/v1", rootRouter);
 
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
