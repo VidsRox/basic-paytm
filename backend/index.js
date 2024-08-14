@@ -7,7 +7,12 @@ const session = require('express-session');
 
 const app = express()
 
-app.use(Cors())
+app.use(Cors(
+  {
+    origin: ["https://basic-paytm-frontend-six.vercel.app/"],
+    credentials: true
+  }
+))
 app.use(express.json())
 
 connectToDatabase();
