@@ -54,6 +54,12 @@ export const Signup = () => {
 
     return (
         <div className="bg-slate-300 h-screen flex justify-center items-center">
+            <button
+                onClick={() => navigate("/")}
+                className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
+                Home Page
+            </button>
             <div className="flex flex-col w-80 bg-white text-center rounded-lg p-4">
                 <Heading label={"Sign up"} />
                 <SubHeading label={"Enter your details to create an account"} />
