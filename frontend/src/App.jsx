@@ -7,6 +7,7 @@ import {Dashboard} from './pages/Dashboard'
 import { SendMoney } from './pages/SendMoney';
 import ProtectedRoute from './authentication/ProtectedRoute'
 import { Update } from './pages/Update';
+import TransactionHistory from './pages/TransactionHistory';
 
 const App = () => (
     <AuthProvider>
@@ -21,6 +22,7 @@ const App = () => (
                 />
                 <Route path="/send" element={<SendMoney />} />
                 <Route path="/update" element={<Update />} />
+                <Route path="/history" element={<TransactionHistory/>} />
             </Routes>
         </Router>
     </AuthProvider>

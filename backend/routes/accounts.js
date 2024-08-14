@@ -3,6 +3,8 @@ const {authMiddleware } = require("../middleware");
 const { Account, Transaction } = require("../db");
 const { default: mongoose } = require("mongoose");
 
+const  {createTransaction} = require('../controllers/transactionController')
+
 const router = express.Router();
 
 router.get("/balance", authMiddleware, async (req, res) => {
@@ -119,19 +121,31 @@ router.post('/logout', (req, res) => {
 
 router.get("/history", authMiddleware, async (req, res) => {
     try {
+        // Log the user ID to verify it's correctly set
+        console.log("User ID from middleware:", req.userId);
+
+        // Convert req.userId to ObjectId correctly
+        const userId = new mongoose.Types.ObjectId(req.userId);
+
+        // Query to find transactions where the user is either the sender or the recipient
         const transactions = await Transaction.find({
             $or: [
-                { from: req.userId }, // Transactions where the user is the sender
-                { to: req.userId }    // Transactions where the user is the recipient
+                { from: userId }, // Transactions where the user is the sender
+                { to: userId }    // Transactions where the user is the recipient
             ]
         }).sort({ date: -1 }); // Sort by date, most recent first
 
+        // If no transactions are found, return a 404 status with a message
         if (transactions.length === 0) {
             return res.status(404).json({ message: "No transactions found" });
         }
 
+        // Return the found transactions
         res.json(transactions);
     } catch (error) {
+        console.error("Error fetching transaction history:", error);
+
+        // Return a 500 status with an error message if something goes wrong
         res.status(500).json({
             message: "Failed to fetch transaction history",
             error: error.message
