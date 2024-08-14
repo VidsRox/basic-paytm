@@ -30,7 +30,4 @@ app.use(session({
 
 app.use("/api/v1", rootRouter);
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
