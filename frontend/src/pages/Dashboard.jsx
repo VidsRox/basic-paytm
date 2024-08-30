@@ -12,12 +12,13 @@ export const Dashboard = () => {
     const [balance, setBalance] = useState(0);
     const [initials, setInitials] = useState("");
     const [firstName, setFirstName] = useState("");
+    const [loadingData, setLoadingData] = useState(true); // Added loading state for data fetching
     const { isAuthenticated, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate("/signin"); // Redirect to sign-in if not authenticated
+            navigate("/signin");
             return;
         }
 
@@ -40,6 +41,7 @@ export const Dashboard = () => {
                 setInitials(userInitials);
             } catch (error) {
                 console.error("Error fetching user data:", error);
+                alert("Failed to fetch user data. Please try again.");
                 navigate("/signin");
             }
         };
@@ -53,13 +55,16 @@ export const Dashboard = () => {
             }
 
             try {
-                const response = await axios.get("https://basic-paytm.vercel.app/api/v1/account/balance", {
+                const response = await axios.get("http://localhost:3000/api/v1/account/balance", { // URL corrected
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setBalance(response.data.balance);
             } catch (error) {
                 console.error("Error fetching balance:", error);
+                alert("Failed to fetch balance. Please try again.");
                 navigate("/signin");
+            } finally {
+                setLoadingData(false); // Stop loading after data fetch
             }
         };
 
@@ -67,8 +72,8 @@ export const Dashboard = () => {
         fetchBalance();
     }, [isAuthenticated, navigate]);
 
-    if (loading) {
-        return <div>Loading...</div>; // Show loading state while checking auth
+    if (loading || loadingData) {
+        return <div>Loading...</div>; // Show loading state while checking auth or fetching data
     }
 
     return (

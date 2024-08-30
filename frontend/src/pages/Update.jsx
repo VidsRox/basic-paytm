@@ -19,7 +19,7 @@ export const Update = () => {
         }
 
         try {
-            await axios.put("https://basic-paytm.vercel.app/api/v1/user/update", { firstName, lastName }, {
+            await axios.put("http://localhost:3000/api/v1/user/update", { firstName, lastName }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setMessage("Credentials updated");
