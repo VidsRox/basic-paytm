@@ -7,12 +7,12 @@ const accountRouter = require('./routes/accounts')
 
 const app = express();
 
-// app.use(Cors({
-//   origin: "https://basic-paytm-frontend-six.vercel.app", // Your frontend URL
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   credentials: true
-// }));
+  app.use(Cors({
+    origin: "https://basic-paytm-frontend-six.vercel.app", //r frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  }));
 
 app.use(Cors())
 
