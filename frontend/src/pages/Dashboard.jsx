@@ -31,7 +31,7 @@ export const Dashboard = () => {
             }
 
             try {
-                const response = await axios.get("https://basic-paytm-server.vercel.app/api/v1/user/me", {
+                const response = await axios.get("https://payment-app-backend-71x1uots6-vidyun-agarwals-projects.vercel.app/api/v1/user/me", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const { firstName, lastName } = response.data;
@@ -55,7 +55,7 @@ export const Dashboard = () => {
             }
 
             try {
-                const response = await axios.get("https://basic-paytm-server.vercel.app/api/v1/account/balance", { // URL corrected
+                const response = await axios.get("https://payment-app-backend-71x1uots6-vidyun-agarwals-projects.vercel.app/api/v1/account/balance", { // URL corrected
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setBalance(response.data.balance);

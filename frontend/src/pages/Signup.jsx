@@ -23,7 +23,7 @@ export const Signup = () => {
 
     const handleSignup = async () => {
         try {
-            const response = await axios.post("https://basic-paytm-server.vercel.app/api/v1/user/signup", {
+            const response = await axios.post("https://payment-app-backend-71x1uots6-vidyun-agarwals-projects.vercel.app/api/v1/user/signup", {
                 username,
                 firstName,
                 lastName,

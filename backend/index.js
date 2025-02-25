@@ -29,5 +29,5 @@ app.use(session({
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/account", accountRouter);
 
-// Start the server
-// app.listen(3000);
+// Instead of starting a server with app.listen(), export the app
+module.exports = app;
