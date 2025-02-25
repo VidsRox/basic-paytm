@@ -20,7 +20,7 @@ export const SendMoney = () => {
         setSuccess(null);
 
         try {
-            const response = await axios.post("https://payment-app-backend-71x1uots6-vidyun-agarwals-projects.vercel.app/api/v1/account/transfer", {
+            const response = await axios.post("https://payment-app-backend-qbmh05c94-vidyun-agarwals-projects.vercel.app/api/v1/account/transfer", {
                 to: id,
                 amount
             }, {

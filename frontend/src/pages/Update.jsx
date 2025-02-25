@@ -19,7 +19,7 @@ export const Update = () => {
         }
 
         try {
-            await axios.put("https://payment-app-backend-71x1uots6-vidyun-agarwals-projects.vercel.app/api/v1/user/update", { firstName, lastName }, {
+            await axios.put("https://payment-app-backend-qbmh05c94-vidyun-agarwals-projects.vercel.app/api/v1/user/update", { firstName, lastName }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setMessage("Credentials updated");
