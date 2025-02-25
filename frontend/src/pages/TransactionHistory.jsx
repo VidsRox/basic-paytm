@@ -10,7 +10,7 @@ const TransactionHistory = () => {
         const fetchTransactions = async () => {
             try {
                 const token = localStorage.getItem("token"); // Ensure token is stored in localStorage after login
-                const response = await axios.get("https://payment-app-backend-qbmh05c94-vidyun-agarwals-projects.vercel.app/api/v1/account/history", {
+                const response = await axios.get("https://payment-app-backend-b3wcxdije-vidyun-agarwals-projects.vercel.app/api/v1/account/history", {
                     headers: {
                         Authorization: `Bearer ${token}`, // Attach the token for authentication
                     },
