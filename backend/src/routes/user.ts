@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { User, Account } from "../db";
 import jwt from "jsonwebtoken";
-import z from "zod";
+import {z} from "zod";
 import bcrypt from "bcrypt";
 import { JWT_SECRET } from "../config";
 import { authMiddleware } from "../middleware";
