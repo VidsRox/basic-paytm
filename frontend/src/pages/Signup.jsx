@@ -23,29 +23,31 @@ export const Signup = () => {
 
     const handleSignup = async () => {
         try {
-            await axios.post("https://basic-paytm.vercel.app/api/v1/user/signup", {
-                username,
-                firstName,
-                lastName,
-                password
-            });
-            // Show success message
-            setSuccessMessage("User created successfully! Redirecting to sign in...");
-            // Wait for a few seconds before redirecting
-            setTimeout(() => {
-                navigate("/signin");
-            }, 2000); // Redirect after 2 seconds
+          const response = await axios.post(
+            "https://basic-paytm.vercel.app/api/v1/user/signup",
+            {
+              username,
+              firstName,
+              lastName,
+              password,
+            },
+            { withCredentials: true } // Add this
+          );
+          setSuccessMessage("User created successfully! Redirecting to sign in...");
+          setTimeout(() => {
+            navigate("/signin");
+          }, 2000);
         } catch (error) {
-            console.error('Error during signup:', error);
-            if (error.code === 'ERR_NETWORK') {
-                alert('Network error: Please check your connection or try again later.');
-            } else if (error.response && error.response.data.message) {
-                alert(`Error: ${error.response.data.message}`);
-            } else {
-                alert('An unexpected error occurred. Please try again.');
-            }
+          console.error("Error during signup:", error);
+          if (error.code === "ERR_NETWORK") {
+            alert("Network error: Please check your connection or try again later.");
+          } else if (error.response && error.response.data.message) {
+            alert(`Error: ${error.response.data.message}`);
+          } else {
+            alert("An unexpected error occurred. Please try again.");
+          }
         }
-    };
+      };
     
 
     return (
