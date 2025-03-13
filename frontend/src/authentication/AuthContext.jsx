@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
             const authToken = localStorage.getItem('token');
             if (authToken) {
                 try {
-                    await axios.get('https://payment-app-backend-b3wcxdije-vidyun-agarwals-projects.vercel.app/api/v1/user/verifyToken', {
+                    await axios.get('https://basic-paytm.vercel.app/api/v1/user/verifyToken', {
                         headers: { Authorization: `Bearer ${authToken}` }
                     });
                     setIsAuthenticated(true);
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await axios.post('https://payment-app-backend-b3wcxdije-vidyun-agarwals-projects.vercel.app/api/v1/account/logout');
+            await axios.post('https://basic-paytm.vercel.app/api/v1/account/logout');
             localStorage.removeItem('token');
             setIsAuthenticated(false);
         } catch (error) {
